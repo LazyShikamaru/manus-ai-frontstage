@@ -33,19 +33,19 @@ const PricingCard = ({
       )}
       
       <div className="text-center mb-8">
-        <h3 className="font-serif text-2xl font-bold text-foreground mb-2">{title}</h3>
+        <h3 className="font-sans text-2xl font-bold text-foreground mb-2">{title}</h3>
         <div className="flex items-baseline justify-center mb-4">
-          <span className="text-4xl font-bold text-foreground">{price}</span>
-          {price !== "Free" && <span className="text-muted-foreground ml-2">/month</span>}
+          <span className="font-sans text-4xl font-bold text-foreground">{price}</span>
+          {price !== "Free" && <span className="font-sans text-muted-foreground ml-2">/month</span>}
         </div>
-        <p className="text-muted-foreground">{description}</p>
+        <p className="font-sans text-muted-foreground">{description}</p>
       </div>
 
       <ul className="space-y-4 mb-8">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start space-x-3">
             <Check className="h-5 w-5 text-success mt-0.5 flex-shrink-0" />
-            <span className="text-foreground">{feature}</span>
+            <span className="font-sans text-foreground">{feature}</span>
           </li>
         ))}
       </ul>

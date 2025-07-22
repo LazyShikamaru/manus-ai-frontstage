@@ -64,23 +64,23 @@ const Landing = () => {
       <section className="relative py-20 px-4 sm:py-32">
         <div className="max-w-7xl mx-auto text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
+            <h1 className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight px-4 sm:px-0">
               Create newsletters that 
-              <span className="text-transparent bg-clip-text bg-gradient-editorial"> captivate</span> and 
-              <span className="text-transparent bg-clip-text bg-gradient-coral"> convert</span>
+              <span className="text-transparent bg-clip-text bg-gradient-editorial block sm:inline"> captivate</span> and 
+              <span className="text-transparent bg-clip-text bg-gradient-coral block sm:inline"> convert</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
+            <p className="font-sans text-lg sm:text-xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto px-4 sm:px-0">
               AI-powered newsletter platform for indie creators, writers, and entrepreneurs. 
               Turn your ideas into engaging content and build a thriving subscriber base.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/signup">
-                <Button variant="hero" size="lg" className="group">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center px-4 sm:px-0">
+              <Link to="/signup" className="w-full sm:w-auto">
+                <Button variant="hero" size="lg" className="group w-full sm:w-auto">
                   Start Creating Free
                   <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 View Examples
               </Button>
             </div>
@@ -91,15 +91,15 @@ const Landing = () => {
       {/* Features Section */}
       <section className="py-20 px-4 bg-muted/30">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-16 px-4">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Everything you need to succeed
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="font-sans text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               From AI-powered writing to advanced analytics, we've got your newsletter journey covered.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 px-4">
             {features.map((feature, index) => (
               <FeatureCard
                 key={index}
@@ -115,15 +115,15 @@ const Landing = () => {
       {/* Pricing Section */}
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-16 px-4">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Choose your plan
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="font-sans text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
               Start free and upgrade as you grow. No hidden fees, cancel anytime.
             </p>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto px-4">
             <PricingCard
               title="Free"
               price="Free"
@@ -161,21 +161,21 @@ const Landing = () => {
       {/* FAQ Section */}
       <section className="py-20 px-4 bg-muted/30">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="font-serif text-4xl font-bold text-foreground mb-4">
+          <div className="text-center mb-16 px-4">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Frequently asked questions
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="font-sans text-lg sm:text-xl text-muted-foreground">
               Everything you need to know about Manus AI
             </p>
           </div>
-          <Accordion type="single" collapsible className="space-y-4">
+          <Accordion type="single" collapsible className="space-y-4 px-4">
             {faqItems.map((item, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="bg-card border border-border rounded-lg px-6">
-                <AccordionTrigger className="font-accent font-medium text-left">
+                <AccordionTrigger className="font-sans font-medium text-left text-base sm:text-lg">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
+                <AccordionContent className="font-sans text-muted-foreground text-sm sm:text-base">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -193,10 +193,10 @@ const Landing = () => {
                 <Pen className="h-8 w-8 text-pure-white" />
               </div>
             </div>
-            <h2 className="font-serif text-4xl font-bold text-foreground mb-4">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Ready to transform your writing?
             </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+            <p className="font-sans text-lg sm:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Join thousands of creators who are building successful newsletters with AI assistance.
             </p>
             <Link to="/signup">

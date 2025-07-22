@@ -29,6 +29,7 @@ export default {
 				'ink-black': 'hsl(var(--ink-black))',
 				'editorial-coral': 'hsl(var(--editorial-coral))',
 				'playful-indigo': 'hsl(var(--playful-indigo))',
+				'electric-purple': 'hsl(var(--electric-purple))',
 				'off-white-paper': 'hsl(var(--off-white-paper))',
 				'pure-white': 'hsl(var(--pure-white))',
 				'charcoal': 'hsl(var(--charcoal))',

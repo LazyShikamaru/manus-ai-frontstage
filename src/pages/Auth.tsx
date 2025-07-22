@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, Lock, User } from "lucide-react";
+import { ArrowLeft, Mail, Lock, User, AlertCircle } from "lucide-react";
 
 interface AuthProps {
   type: "login" | "signup";
@@ -15,12 +15,65 @@ const Auth = ({ type }: AuthProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
   const isLogin = type === "login";
 
+  // Email validation
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setEmailError("Email is required");
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
+  // Password validation
+  const validatePassword = (password: string) => {
+    if (!password) {
+      setPasswordError("Password is required");
+      return false;
+    }
+    if (password.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
+  // Handle real-time validation
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    if (value) validateEmail(value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (value) validatePassword(value);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate all fields before submission
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+    
+    if (!isEmailValid || !isPasswordValid) {
+      return;
+    }
+    
     // Here you would handle authentication
     console.log({ email, password, name });
     // Redirect to dashboard after successful auth
@@ -40,26 +93,26 @@ const Auth = ({ type }: AuthProps) => {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to home
           </Link>
-          <h1 className="font-serif text-4xl font-bold text-pure-white mb-6">
-            {isLogin ? "Welcome back to" : "Welcome to"} Manus AI
-          </h1>
-          <blockquote className="text-xl text-pure-white/90 italic leading-relaxed mb-8">
-            "{motivationalQuote}"
-          </blockquote>
-          <div className="space-y-4 text-pure-white/80">
-            <div className="flex items-center space-x-3">
-              <div className="w-2 h-2 bg-pure-white rounded-full"></div>
-              <span>AI-powered writing assistance</span>
+            <h1 className="font-sans text-4xl font-bold text-pure-white mb-6">
+              {isLogin ? "Welcome back to" : "Welcome to"} Manus AI
+            </h1>
+            <blockquote className="font-sans text-xl text-pure-white/90 italic leading-relaxed mb-8">
+              "{motivationalQuote}"
+            </blockquote>
+            <div className="space-y-4 text-pure-white/80 font-sans">
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-pure-white rounded-full"></div>
+                <span>AI-powered writing assistance</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-pure-white rounded-full"></div>
+                <span>Grow your subscriber base</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-pure-white rounded-full"></div>
+                <span>Monetize your content</span>
+              </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-2 h-2 bg-pure-white rounded-full"></div>
-              <span>Grow your subscriber base</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="w-2 h-2 bg-pure-white rounded-full"></div>
-              <span>Monetize your content</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -72,15 +125,15 @@ const Auth = ({ type }: AuthProps) => {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to home
             </Link>
-            <h1 className="font-serif text-3xl font-bold text-foreground">Manus AI</h1>
+            <h1 className="font-sans text-3xl font-bold text-foreground">Manus AI</h1>
           </div>
 
           <Card className="border-border shadow-soft">
             <CardHeader className="text-center">
-              <CardTitle className="font-serif text-2xl">
+              <CardTitle className="font-sans text-2xl">
                 {isLogin ? "Sign in to your account" : "Create your account"}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="font-sans">
                 {isLogin 
                   ? "Welcome back! Please sign in to continue." 
                   : "Start your journey with AI-powered newsletters."
@@ -91,7 +144,7 @@ const Auth = ({ type }: AuthProps) => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="font-accent">Full Name</Label>
+                    <Label htmlFor="name" className="font-sans">Full Name</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
@@ -100,7 +153,7 @@ const Auth = ({ type }: AuthProps) => {
                         placeholder="Enter your full name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="pl-10"
+                        className="pl-10 font-sans"
                         required
                       />
                     </div>
@@ -108,7 +161,7 @@ const Auth = ({ type }: AuthProps) => {
                 )}
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="font-accent">Email</Label>
+                  <Label htmlFor="email" className="font-sans">Email</Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -116,15 +169,21 @@ const Auth = ({ type }: AuthProps) => {
                       type="email"
                       placeholder="Enter your email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-10"
+                      onChange={handleEmailChange}
+                      className={`pl-10 font-sans ${emailError ? 'border-destructive focus:border-destructive' : ''}`}
                       required
                     />
                   </div>
+                  {emailError && (
+                    <div className="flex items-center space-x-2 text-destructive text-sm">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="font-sans">{emailError}</span>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="font-accent">Password</Label>
+                  <Label htmlFor="password" className="font-sans">Password</Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -132,14 +191,20 @@ const Auth = ({ type }: AuthProps) => {
                       type="password"
                       placeholder="Enter your password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-10"
+                      onChange={handlePasswordChange}
+                      className={`pl-10 font-sans ${passwordError ? 'border-destructive focus:border-destructive' : ''}`}
                       required
                     />
                   </div>
+                  {passwordError && (
+                    <div className="flex items-center space-x-2 text-destructive text-sm">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="font-sans">{passwordError}</span>
+                    </div>
+                  )}
                 </div>
 
-                <Button type="submit" className="w-full" size="lg">
+                <Button type="submit" variant="default" className="w-full" size="lg">
                   {isLogin ? "Sign In" : "Create Account"}
                 </Button>
               </form>
@@ -149,7 +214,7 @@ const Auth = ({ type }: AuthProps) => {
                   <Separator className="w-full" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-card px-2 text-muted-foreground font-accent">Or continue with</span>
+                  <span className="bg-card px-2 text-muted-foreground font-sans">Or continue with</span>
                 </div>
               </div>
 
