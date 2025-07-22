@@ -24,6 +24,16 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				
+				/* Manus AI Brand Colors */
+				'ink-black': 'hsl(var(--ink-black))',
+				'editorial-coral': 'hsl(var(--editorial-coral))',
+				'playful-indigo': 'hsl(var(--playful-indigo))',
+				'off-white-paper': 'hsl(var(--off-white-paper))',
+				'pure-white': 'hsl(var(--pure-white))',
+				'charcoal': 'hsl(var(--charcoal))',
+				'minty-success': 'hsl(var(--minty-success))',
+
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
@@ -44,6 +54,10 @@ export default {
 					DEFAULT: 'hsl(var(--accent))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
 				popover: {
 					DEFAULT: 'hsl(var(--popover))',
 					foreground: 'hsl(var(--popover-foreground))'
@@ -62,6 +76,25 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				}
+			},
+			backgroundImage: {
+				'gradient-coral': 'var(--gradient-coral)',
+				'gradient-indigo': 'var(--gradient-indigo)',
+				'gradient-editorial': 'var(--gradient-editorial)',
+			},
+			boxShadow: {
+				'soft': 'var(--shadow-soft)',
+				'editorial': 'var(--shadow-editorial)',
+				'hover': 'var(--shadow-hover)',
+			},
+			fontFamily: {
+				'serif': ['Canela Text', 'Georgia', 'serif'],
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'accent': ['Space Grotesk', 'system-ui', 'sans-serif'],
+			},
+			transitionTimingFunction: {
+				'smooth': 'var(--transition-smooth)',
+				'bounce': 'var(--transition-bounce)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

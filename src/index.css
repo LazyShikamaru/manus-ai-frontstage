@@ -2,39 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* Manus AI Design System - Modern Editorial with Playful Accents
 All colors MUST be HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Manus AI Brand Colors */
+    --ink-black: 0 0% 10%;
+    --editorial-coral: 357 100% 67%;
+    --playful-indigo: 252 69% 69%;
+    --off-white-paper: 42 33% 97%;
+    --pure-white: 0 0% 100%;
+    --charcoal: 0 0% 30%;
+    --minty-success: 158 77% 58%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Design System Semantic Colors */
+    --background: 42 33% 97%; /* Off-white Paper */
+    --foreground: 0 0% 10%; /* Ink Black */
+
+    --card: 0 0% 100%; /* Pure White */
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 357 100% 67%; /* Editorial Coral */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 100%; /* Pure White */
+    --secondary-foreground: 252 69% 69%; /* Playful Indigo */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 42 33% 95%;
+    --muted-foreground: 0 0% 30%; /* Charcoal */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 252 69% 69%; /* Playful Indigo */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 158 77% 58%; /* Minty Success */
+    --success-foreground: 0 0% 10%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 95%;
+    --ring: 252 69% 69%;
+
+    /* Editorial Design Tokens */
+    --gradient-coral: linear-gradient(135deg, hsl(var(--editorial-coral)), hsl(357 100% 72%));
+    --gradient-indigo: linear-gradient(135deg, hsl(var(--playful-indigo)), hsl(252 69% 74%));
+    --gradient-editorial: linear-gradient(135deg, hsl(var(--editorial-coral)), hsl(var(--playful-indigo)));
+    
+    --shadow-soft: 0 4px 20px hsl(var(--ink-black) / 0.08);
+    --shadow-editorial: 0 8px 32px hsl(var(--editorial-coral) / 0.15);
+    --shadow-hover: 0 12px 40px hsl(var(--ink-black) / 0.12);
+
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --radius: 0.5rem;
 
