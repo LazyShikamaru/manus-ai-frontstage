@@ -185,7 +185,8 @@ Ready to dive deeper? Let's make this newsletter shine!
               variant="outline" 
               onClick={handleSaveDraft}
               disabled={isSaving}
-              className="min-w-[120px]"
+              className="min-w-[120px] hover:scale-105 transition-all duration-300"
+              aria-label="Save newsletter as draft"
             >
               {isSaving ? (
                 <>
@@ -202,7 +203,8 @@ Ready to dive deeper? Let's make this newsletter shine!
             <Button 
               onClick={handlePublish}
               disabled={isPublishing}
-              className="min-w-[120px] bg-electric-purple hover:bg-electric-purple/90"
+              className="min-w-[120px] bg-electric-purple hover:bg-electric-purple/90 hover:scale-105 transition-all duration-300 hover:shadow-lg hover:shadow-electric-purple/25"
+              aria-label="Publish newsletter to subscribers"
             >
               {isPublishing ? (
                 <>
@@ -212,7 +214,7 @@ Ready to dive deeper? Let's make this newsletter shine!
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Publish
+                  🚀 Publish
                 </>
               )}
             </Button>
@@ -221,9 +223,9 @@ Ready to dive deeper? Let's make this newsletter shine!
       </header>
 
       <div className="max-w-6xl mx-auto p-4 sm:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           {/* Left Column - AI Assistant */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="xl:col-span-1 space-y-6 order-2 xl:order-1">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center font-inter">
@@ -269,7 +271,8 @@ Ready to dive deeper? Let's make this newsletter shine!
                       if (e.target.value.trim()) setPromptError("");
                     }}
                     rows={4}
-                    className={`font-inter resize-y min-h-[100px] max-h-[300px] ${promptError ? 'border-red-500 focus:border-red-500' : ''}`}
+                    className={`font-inter resize-both min-h-[100px] max-h-[300px] transition-all duration-300 ${promptError ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : 'focus:ring-electric-purple/20'}`}
+                    aria-label="Newsletter topic description"
                   />
                   {promptError && (
                     <div className="flex items-center gap-1 text-sm text-red-500">
@@ -285,17 +288,18 @@ Ready to dive deeper? Let's make this newsletter shine!
                 <Button 
                   onClick={handleAIGenerate} 
                   disabled={!aiPrompt.trim() || !title.trim() || isGenerating}
-                  className="w-full group bg-electric-purple hover:bg-electric-purple/90 transition-all duration-300 hover:scale-105"
+                  className="w-full group bg-electric-purple hover:bg-electric-purple/90 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Generate newsletter content using AI"
                 >
                   {isGenerating ? (
                     <>
                       <div className="animate-spin h-4 w-4 mr-2 border-2 border-current border-t-transparent rounded-full" />
-                      Generating...
+                      <span className="animate-pulse">AI is thinking...</span>
                     </>
                   ) : (
                     <>
-                      <Wand2 className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-300" />
-                      Brainstorm with AI
+                      <Wand2 className="h-4 w-4 mr-2 group-hover:rotate-12 group-hover:animate-pulse transition-all duration-300" />
+                      ✨ Brainstorm with AI
                     </>
                   )}
                 </Button>
@@ -308,22 +312,28 @@ Ready to dive deeper? Let's make this newsletter shine!
                 <CardTitle className="font-inter">Newsletter Settings</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-card/50">
-                  <div className="space-y-0.5">
-                    <Label className="text-base font-medium font-inter">Premium Content</Label>
-                    <p className="text-sm text-muted-foreground font-inter">
-                      Require subscription to read full content
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Switch
-                      checked={isPremium}
-                      onCheckedChange={setIsPremium}
-                      className="data-[state=checked]:bg-electric-purple"
-                    />
-                    <span className={`text-sm font-medium transition-colors duration-200 ${isPremium ? 'text-electric-purple' : 'text-muted-foreground'}`}>
-                      {isPremium ? 'Enabled' : 'Disabled'}
-                    </span>
+                <div className={`p-4 rounded-lg border transition-all duration-300 ${isPremium ? 'border-electric-purple bg-electric-purple/5 shadow-md' : 'border-border bg-card/50'}`}>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-base font-medium font-inter flex items-center gap-2">
+                        Premium Content
+                        {isPremium && <span className="text-xs bg-electric-purple text-white px-2 py-0.5 rounded-full animate-pulse">PRO</span>}
+                      </Label>
+                      <p className="text-sm text-muted-foreground font-inter">
+                        Require subscription to read full content
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Switch
+                        checked={isPremium}
+                        onCheckedChange={setIsPremium}
+                        className="data-[state=checked]:bg-electric-purple transition-all duration-300 hover:scale-105"
+                        aria-label="Toggle premium content setting"
+                      />
+                      <span className={`text-sm font-medium transition-all duration-300 ${isPremium ? 'text-electric-purple animate-fade-in' : 'text-muted-foreground'}`}>
+                        {isPremium ? '✨ Enabled' : 'Disabled'}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -396,7 +406,7 @@ Ready to dive deeper? Let's make this newsletter shine!
           </div>
 
           {/* Right Column - Content Editor */}
-          <div className="lg:col-span-2 min-h-0">
+          <div className="xl:col-span-2 min-h-0 order-1 xl:order-2">
             <Card className="h-full flex flex-col">
               <CardHeader className="flex-shrink-0">
                 <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 font-inter">
@@ -417,7 +427,8 @@ Ready to dive deeper? Let's make this newsletter shine!
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     rows={20}
-                    className="font-inter text-sm resize-y min-h-[400px] lg:min-h-[500px] flex-1"
+                    className="font-inter text-sm resize-both min-h-[400px] lg:min-h-[500px] xl:min-h-[600px] flex-1 transition-all duration-300 focus:ring-2 focus:ring-electric-purple/20"
+                    aria-label="Newsletter content editor"
                   />
                   
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-sm text-muted-foreground font-inter">
