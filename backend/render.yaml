@@ -1,0 +1,140 @@
+services:
+  # Redis service for Celery broker
+  - type: redis
+    name: manus-ai-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+
+  # Main Flask backend service
+  - type: web
+    name: manus-ai-backend
+    runtime: python3
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python src/main.py
+    rootDir: backend
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: manus-ai-redis
+          property: connectionString
+      - key: DATABASE_URL
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: noreply@manusai.com
+    healthCheckPath: /
+    autoDeploy: true
+
+  # Celery worker service
+  - type: worker
+    name: manus-ai-celery-worker
+    runtime: python3
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A src.celery_app worker --loglevel=info
+    rootDir: backend
+    envVars:
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: manus-ai-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: manus-ai-redis
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: manus-ai-redis
+          property: connectionString
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+      - key: C_FORCE_ROOT
+        value: "1"
+      - key: DATABASE_URL
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: noreply@manusai.com
+    autoDeploy: true
+
+  # Celery beat scheduler service
+  - type: worker
+    name: manus-ai-celery-beat
+    runtime: python3
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A src.celery_app beat --loglevel=info
+    rootDir: backend
+    envVars:
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: manus-ai-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: manus-ai-redis
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: manus-ai-redis
+          property: connectionString
+      - key: PYTHONPATH
+        value: /opt/render/project/src
+      - key: C_FORCE_ROOT
+        value: "1"
+      - key: DATABASE_URL
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: noreply@manusai.com
+    autoDeploy: true
+
+  # PostgreSQL database
+  - type: pgsql
+    name: manus-ai-database
+    plan: starter
+    databaseName: manus_ai_newsletter
+    databaseUser: manus_ai_user
+
+# Static site for frontend (optional - can be deployed separately)
+# - type: static
+#   name: manus-ai-frontend
+#   buildCommand: npm run build
+#   staticPublishPath: ./dist
+#   rootDir: frontend
+#   envVars:
+#     - key: REACT_APP_API_URL
+#       fromService:
+#         type: web
+#         name: manus-ai-backend
+#         property: host
+

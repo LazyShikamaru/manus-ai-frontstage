@@ -2,6 +2,11 @@ from flask import Blueprint, request, jsonify
 from src.services.stripe_service import StripeService
 from src.models.user import db, User
 from src.models.subscription import Subscription
+from src.tasks.subscription_tasks import process_new_subscription, process_subscription_renewal, process_subscription_cancellation
+from src.tasks.email_tasks import send_payment_failed_notification
+import logging
+
+logger = logging.getLogger(__name__)
 
 payments_bp = Blueprint('payments', __name__)
 stripe_service = StripeService()
@@ -92,22 +97,130 @@ def get_subscription_status(user_id):
 
 @payments_bp.route('/webhook', methods=['POST'])
 def stripe_webhook():
-    """Handle Stripe webhook events"""
+    """Enhanced Stripe webhook handler with Celery task integration"""
     try:
         payload = request.get_data(as_text=True)
         sig_header = request.headers.get('Stripe-Signature')
         
         if not sig_header:
+            logger.error("Missing Stripe signature header")
             return jsonify({'error': 'Missing Stripe signature'}), 400
         
-        result = stripe_service.handle_webhook(payload, sig_header)
+        # Verify webhook signature and parse event
+        import stripe
+        webhook_secret = stripe_service.webhook_secret
         
-        if result['success']:
-            return jsonify({'status': 'success'})
-        else:
-            return jsonify({'error': result['error']}), 400
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, webhook_secret
+            )
+        except ValueError as e:
+            logger.error(f"Invalid payload: {e}")
+            return jsonify({'error': 'Invalid payload'}), 400
+        except stripe.SignatureVerificationError as e:
+            logger.error(f"Invalid signature: {e}")
+            return jsonify({'error': 'Invalid signature'}), 400
+        
+        logger.info(f"Received Stripe webhook event: {event['type']}")
+        
+        # Handle different event types
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            user_id = session.get('client_reference_id')
             
+            if user_id:
+                logger.info(f"Processing successful checkout for user {user_id}")
+                
+                # Update payment and subscription in database
+                stripe_service._handle_successful_payment(session)
+                
+                # Process subscription asynchronously
+                if session.get('mode') == 'subscription':
+                    process_new_subscription.delay(
+                        user_id=int(user_id),
+                        subscription_tier='premium'
+                    )
+                
+        elif event['type'] == 'invoice.payment_succeeded':
+            invoice = event['data']['object']
+            subscription_id = invoice.get('subscription')
+            customer_id = invoice.get('customer')
+            
+            if subscription_id:
+                logger.info(f"Processing successful payment for subscription {subscription_id}")
+                
+                # Find user by Stripe customer ID or subscription ID
+                subscription = Subscription.query.filter_by(
+                    stripe_subscription_id=subscription_id
+                ).first()
+                
+                if subscription:
+                    # Process renewal asynchronously
+                    process_subscription_renewal.delay(
+                        user_id=subscription.user_id,
+                        stripe_subscription_id=subscription_id
+                    )
+                
+        elif event['type'] == 'invoice.payment_failed':
+            invoice = event['data']['object']
+            subscription_id = invoice.get('subscription')
+            
+            if subscription_id:
+                logger.info(f"Processing failed payment for subscription {subscription_id}")
+                
+                subscription = Subscription.query.filter_by(
+                    stripe_subscription_id=subscription_id
+                ).first()
+                
+                if subscription:
+                    # Send payment failed notification asynchronously
+                    send_payment_failed_notification.delay(subscription.user_id)
+                
+        elif event['type'] == 'customer.subscription.deleted':
+            stripe_subscription = event['data']['object']
+            subscription_id = stripe_subscription['id']
+            
+            logger.info(f"Processing subscription cancellation for {subscription_id}")
+            
+            subscription = Subscription.query.filter_by(
+                stripe_subscription_id=subscription_id
+            ).first()
+            
+            if subscription:
+                # Process cancellation asynchronously
+                process_subscription_cancellation.delay(
+                    user_id=subscription.user_id,
+                    stripe_subscription_id=subscription_id
+                )
+        
+        elif event['type'] == 'customer.subscription.updated':
+            stripe_subscription = event['data']['object']
+            subscription_id = stripe_subscription['id']
+            status = stripe_subscription['status']
+            
+            logger.info(f"Processing subscription update for {subscription_id}: {status}")
+            
+            subscription = Subscription.query.filter_by(
+                stripe_subscription_id=subscription_id
+            ).first()
+            
+            if subscription:
+                # Update subscription status
+                if status == 'active':
+                    subscription.status = 'active'
+                elif status in ['canceled', 'unpaid', 'past_due']:
+                    subscription.status = 'cancelled'
+                    subscription.tier = 'free'
+                
+                db.session.commit()
+        
+        else:
+            logger.info(f"Unhandled webhook event type: {event['type']}")
+        
+        return jsonify({'status': 'success'})
+        
     except Exception as e:
+        logger.error(f"Error processing webhook: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
 @payments_bp.route('/upgrade-to-premium', methods=['POST'])
@@ -147,6 +260,9 @@ def upgrade_to_premium():
         
         db.session.commit()
         
+        # Process subscription asynchronously
+        process_new_subscription.delay(user_id=user_id, subscription_tier='premium')
+        
         return jsonify({
             'success': True,
             'message': 'User upgraded to premium successfully',
@@ -155,6 +271,36 @@ def upgrade_to_premium():
         
     except Exception as e:
         db.session.rollback()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@payments_bp.route('/webhook/test', methods=['POST'])
+def test_webhook():
+    """Test webhook endpoint for local development"""
+    try:
+        data = request.get_json()
+        event_type = data.get('type', 'checkout.session.completed')
+        
+        logger.info(f"Test webhook received: {event_type}")
+        
+        if event_type == 'checkout.session.completed':
+            # Simulate successful checkout
+            user_id = data.get('user_id', 1)
+            process_new_subscription.delay(user_id=user_id, subscription_tier='premium')
+            
+        elif event_type == 'invoice.payment_failed':
+            # Simulate failed payment
+            user_id = data.get('user_id', 1)
+            send_payment_failed_notification.delay(user_id)
+        
+        return jsonify({
+            'success': True,
+            'message': f'Test webhook {event_type} processed'
+        })
+        
+    except Exception as e:
         return jsonify({
             'success': False,
             'error': str(e)
